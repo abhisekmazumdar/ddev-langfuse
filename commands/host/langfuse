@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+## #ddev-generated: If you want to edit and own this file, remove this line.
+## Description: Open the Langfuse web UI in a browser
+## Usage: langfuse
+## Example: "ddev langfuse"
+
+DDEV_LANGFUSE_HTTP_PORT=3000
+DDEV_LANGFUSE_HTTPS_PORT=3443
+
+if [ "${DDEV_PRIMARY_URL%://*}" = "http" ] || [ -n "${GITPOD_WORKSPACE_ID:-}" ] || [ "${CODESPACES:-}" = "true" ]; then
+    ddev launch ":${DDEV_LANGFUSE_HTTP_PORT}"
+else
+    ddev launch ":${DDEV_LANGFUSE_HTTPS_PORT}"
+fi
