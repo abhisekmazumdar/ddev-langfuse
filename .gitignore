@@ -1,0 +1,12 @@
+# macOS Finder cruft
+.DS_Store
+
+# Editor swap/backup files
+*~
+*.swp
+
+# Local Claude Code state -- not part of the add-on, shouldn't be published
+.claude/
+
+# Stray log output from manual `bats` runs
+*.log

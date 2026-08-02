@@ -35,6 +35,12 @@ services:
     env_file:
       - .env.langfuse
     environment:
+      # Next.js's standalone server binds to $HOSTNAME if set, and Docker
+      # auto-populates that from the `hostname:` field above -- which
+      # resolves to this container's own IP, not 0.0.0.0/localhost. Without
+      # this override, the healthcheck's `wget http://localhost:3000` gets
+      # "connection refused" forever even once the app is fully up.
+      - HOSTNAME=0.0.0.0
       - DATABASE_URL=postgresql://langfuse:${POSTGRES_PASSWORD}@langfuse-postgres:5432/langfuse
       - NEXTAUTH_URL=http://langfuse-web:3000
       - LANGFUSE_CSP_ENFORCE_HTTPS=false
@@ -68,7 +74,9 @@ services:
       - HTTP_EXPOSE=3000:3000
       - HTTPS_EXPOSE=3443:3000
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/public/health || exit 1"]
+      # 127.0.0.1, not localhost -- this image's /etc/hosts resolves
+      # "localhost" to ::1 only, and the server listens IPv4-only.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/public/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -100,6 +108,9 @@ services:
     env_file:
       - .env.langfuse
     environment:
+      # See the matching HOSTNAME note on langfuse-web above -- the worker's
+      # HTTP health-check server has the same bind-to-$HOSTNAME behavior.
+      - HOSTNAME=0.0.0.0
       - DATABASE_URL=postgresql://langfuse:${POSTGRES_PASSWORD}@langfuse-postgres:5432/langfuse
       - CLICKHOUSE_MIGRATION_URL=clickhouse://langfuse-clickhouse:9000
       - CLICKHOUSE_URL=http://langfuse-clickhouse:8123
@@ -125,7 +136,8 @@ services:
     expose:
       - "3030"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3030/api/health || exit 1"]
+      # See the langfuse-web healthcheck note: 127.0.0.1, not localhost.
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3030/api/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12

@@ -210,19 +210,27 @@ release to install from.
   produced by a `pre_install_actions` script with an existence check
   instead.
 
-## Could not fully verify
+## Verification
 
-- The exact bats/GitHub Actions testing convention was reverse-engineered
-  from the real `ddev/ddev-addon-template`, `ddev-redis`, and `ddev-solr`
-  repositories (fetched directly), so `tests/test.bats` and
-  `.github/workflows/tests.yml` here mirror those closely and should be
-  trustworthy. What's *not* verified is an actual `ddev add-on get` run
-  against this repo end-to-end (no DDEV/Docker execution was available in
-  the environment this add-on was built in) — please run
-  `bats ./tests/test.bats` yourself before publishing, and expect to debug
-  first-run issues around ClickHouse startup time, MinIO bucket creation,
-  or Langfuse's own migration sequencing between `langfuse-web` and
-  `langfuse-worker`.
+`bats ./tests/test.bats --filter-tags '!release'` has been run end-to-end
+against a real DDEV/Docker environment: `ddev add-on get` from a local
+checkout, `ddev restart`, all six services reaching healthy, and
+`ddev langfuse-credentials` printing real (non-placeholder) secrets. One
+real bug surfaced and was fixed by this process: `langfuse-web` and
+`langfuse-worker` both stayed `unhealthy` indefinitely even once fully
+booted, because
+1. Docker auto-populates the container's `HOSTNAME` env var from the
+   compose `hostname:` field, and Next.js's standalone server binds to
+   `$HOSTNAME` if set — so it ended up listening only on its own container
+   IP instead of `0.0.0.0`, and
+2. even after fixing that, the healthchecks' `wget http://localhost:PORT`
+   failed too, because these images' `/etc/hosts` resolves `localhost` to
+   `::1` only while the server listens IPv4-only.
+
+Both are fixed in `docker-compose.langfuse.yaml` (`HOSTNAME=0.0.0.0` env
+var override, healthchecks target `127.0.0.1` instead of `localhost`) — see
+the comments next to those lines if this needs revisiting for a future
+Langfuse image version.
 
 ## License
 

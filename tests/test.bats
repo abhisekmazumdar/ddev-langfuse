@@ -51,7 +51,7 @@ health_checks() {
   # pull, so allow a generous window before giving up.
   webhealth=""
   for _ in $(seq 1 40); do
-    webhealth="$(ddev exec -s langfuse-web "wget -qO- http://localhost:3000/api/public/health" 2>/dev/null || true)"
+    webhealth="$(ddev exec -s langfuse-web "wget -qO- http://127.0.0.1:3000/api/public/health" 2>/dev/null || true)"
     if [ -n "$webhealth" ]; then
       break
     fi
