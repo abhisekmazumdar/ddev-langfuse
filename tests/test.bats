@@ -15,8 +15,7 @@
 setup() {
   set -eu -o pipefail
 
-  # Override this once the add-on has a real GitHub home.
-  export GITHUB_REPO=ddev/ddev-langfuse
+  export GITHUB_REPO=abhisekmazumdar/ddev-langfuse
 
   TEST_BREW_PREFIX="$(brew --prefix 2>/dev/null || true)"
   export BATS_LIB_PATH="${BATS_LIB_PATH}:${TEST_BREW_PREFIX}/lib:/usr/lib/bats"

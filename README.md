@@ -48,14 +48,25 @@ On first install, the add-on:
 ## Installation
 
 ```bash
-# From a local checkout of this repo (before it's published):
-ddev add-on get /absolute/path/to/ddev-langfuse
+# Latest tagged release (recommended -- pinned, reproducible):
+ddev add-on get abhisekmazumdar/ddev-langfuse
 ddev restart
 
-# Once published to GitHub:
-ddev add-on get <owner>/ddev-langfuse
+# A specific release:
+ddev add-on get abhisekmazumdar/ddev-langfuse --version v1.0.0
+ddev restart
+
+# Latest commit on the default branch, if you want unreleased changes:
+ddev add-on get abhisekmazumdar/ddev-langfuse --default-branch
+ddev restart
+
+# From a local checkout instead of GitHub:
+ddev add-on get /absolute/path/to/ddev-langfuse
 ddev restart
 ```
+
+See [releases](https://github.com/abhisekmazumdar/ddev-langfuse/releases)
+for available versions.
 
 Commit the `.ddev` directory changes (`docker-compose.langfuse.yaml`,
 `.env.langfuse.example`, `commands/host/langfuse*`, and the updated
