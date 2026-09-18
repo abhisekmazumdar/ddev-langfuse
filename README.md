@@ -28,7 +28,7 @@ services inside your existing DDEV project:
 | `langfuse-postgres` | `postgres:17` | relational data |
 | `langfuse-clickhouse` | `clickhouse/clickhouse-server:25.12` | trace/analytics store |
 | `langfuse-redis` | `redis:7` | queues/cache |
-| `langfuse-minio` | `minio/minio` | S3-compatible blob storage |
+| `langfuse-minio` | `quay.io/minio/minio` | S3-compatible blob storage |
 
 No lightweight single-container alternative exists for Langfuse's current
 architecture — all six services are required.

@@ -220,7 +220,7 @@ services:
       - "langfuse_redis:/data"
 
   langfuse-minio:
-    image: ${LANGFUSE_MINIO_IMAGE:-minio/minio:latest}
+    image: ${LANGFUSE_MINIO_IMAGE:-quay.io/minio/minio:latest}
     container_name: ddev-${DDEV_SITENAME}-langfuse-minio
     hostname: langfuse-minio
     labels:
