@@ -220,7 +220,10 @@ services:
       - "langfuse_redis:/data"
 
   langfuse-minio:
-    image: ${LANGFUSE_MINIO_IMAGE:-quay.io/minio/minio:latest}
+    # MinIO no longer publishes free public images (Docker Hub minio/minio
+    # and quay.io/minio/minio both refuse anonymous pulls), so use
+    # Chainguard's build, same as langfuse/langfuse's own docker-compose.yml.
+    image: ${LANGFUSE_MINIO_IMAGE:-cgr.dev/chainguard/minio:latest}
     container_name: ddev-${DDEV_SITENAME}-langfuse-minio
     hostname: langfuse-minio
     labels:
@@ -236,7 +239,8 @@ services:
       - "9000"
       - "9091"
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || exit 1"]
+      # The Chainguard image ships no curl; mc is bundled.
+      test: ["CMD", "mc", "ready", "local"]
       interval: 5s
       timeout: 5s
       retries: 20
